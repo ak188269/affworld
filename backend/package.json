@@ -1,0 +1,25 @@
+{
+    "name": "affworld_backend",
+    "version": "1.0.0",
+    "description": "affworld_backend is the ultimate backend solution",
+    "main": "src/index.js",
+    "scripts": {
+        "setup": "npm install && npm update",
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+    "keywords": [
+        "express",
+        "backend",
+        "affworld_backend"
+    ],
+    "license": "UNLICENSED",
+    "dependencies": {
+        "axios": "^1.6.5",
+        "cookie-parser": "^1.4.4",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.17.1",
+        "mongoose": "^8.0.4"
+    }
+}
