@@ -5,7 +5,8 @@ const router = require('express').Router();
 router.get("/",(req, res)=>{
     res.send("welcome to Affworld backend");
 })
-router.use(require('./user'));
+
+router.use("/api/v1/user",require("./user"));
 
 
 module.exports = router;

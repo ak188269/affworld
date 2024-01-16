@@ -3,17 +3,23 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 require('dotenv').config();
 const startDatabase = require('./database/database.js');
+const globalErrorHandler = require('./controllers/globalErrorHandler.js');
 
 
 const { PORT } = process.env;
 
 
 const app = express();
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error.message);
+    // Perform cleanup or other necessary actions
+    process.exit(1); // Exit the process with a non-zero code
+  });
 startDatabase(process.env.DB_URL);
 app.use(express.json( { limit: '50mb' } ));
 app.use(express.urlencoded( { extended: true, limit: '10mb' } ));
 app.use(cookieParser());
-app.use(cors({withcredentials: true}));
+app.use(cors({origin : ["http://localhost:3000"],credentials: true}));
 
 
 
@@ -28,7 +34,7 @@ app.use('*', (req, res) => {
     .json( {status: false, message: 'Endpoint Not Found'} );
 })
 
-
+app.use(globalErrorHandler)
 app.listen(
     PORT,
     () => console.info('Server listening on port ', PORT)
