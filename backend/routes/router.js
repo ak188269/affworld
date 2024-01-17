@@ -7,6 +7,7 @@ router.get("/",(req, res)=>{
 })
 
 router.use("/api/v1/user",require("./user"));
+router.use("/api/v1/secret",require("./secret"));
 
 
 module.exports = router;

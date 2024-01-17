@@ -29,9 +29,9 @@ const globalErrorHandler = (error , req , res , next) => {
 
     if (error.name === "ReferenceError") {
       // you can send email to notify in this case
+      console.log("Reference error: " + error.message + " \nAt" + filename);
       error.statusCode ??= 500;
       error.message = "Internal server error try later"
-      console.log("Reference error: " + error.message + " \nAt" + filename);
     }
 
     if(error.name === "JsonWebTokenError"){

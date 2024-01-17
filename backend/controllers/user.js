@@ -1,9 +1,11 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const CustomError = require("../utils/CustomError");
+
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const CustomError = require("../utils/customError");
 const mySecret = process.env.JWT_SECRET_KEY;
+const axios = require("axios");
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -113,17 +115,19 @@ const login = asyncErrorHandler(async function (req, res,next) {
   if (!email || !password) {
     return next(new CustomError("Please fill valid email and password",400));
   }
-  let user = await User.findOne({ email }).select(["password"]);
+  let user = await User.findOne({ email }).select(["password",'googleId']);
   if (!user) {
     return next(new CustomError("Invalid credentials",401));
   }
-  
+  if(user.googleId && !user.password){
+    return next(new CustomError("You have to use sign in with Google account",400));
+  }
   const isMatch = await user.matchPassword(password); 
 
   if(!isMatch)
   return next(new CustomError("Invalid credentials",401));
 
-    user = await User.findById(user._id);
+    user = await User.findById(user._id).populate('secret');
     const token =  jwt.sign(
       { _id: user._id, name: user.name },
       mySecret
@@ -164,11 +168,76 @@ const getSingleuser = asyncErrorHandler( async (req, res, next) => {
         });
 });
 
+const loginWithGoogle = asyncErrorHandler(async (req , res , next) => {
+  const scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid';
+    const redirectURI = process.env.GOOGLE_CALLBACK_URL;
+    const authURL = `https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectURI}&scope=${scope}`;
+  
+    res.json({success : true, redirectURI : authURL})
+  
+})
+
+const googleCallback = asyncErrorHandler(async (req, res , next) => {
+  const { code } = req.query;
+  console.log("callback");
+    // Exchange code for access token
+    const tokenResponse = await axios.post('https://accounts.google.com/o/oauth2/token', null, {
+      params: {
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: process.env.GOOGLE_CALLBACK_URL,
+        grant_type: 'authorization_code',
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    const accessToken = tokenResponse.data.access_token;
+
+    // Use access token to get user info
+    const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const {id , email , name , picture} = userInfoResponse.data;
+    let user = await User.findOne({email : email});
+    if(!user){
+    // Save user info to the database or retrieve user from the database
+     user = await User.create({
+      googleId : id ,
+      email : email,
+      name : name,
+      avatar : picture,
+    })
+  }
+    const token =  jwt.sign(
+      { _id: user._id, name: user.name },
+      mySecret
+      ,
+      {expiresIn : "1day"}
+    );
+    res.cookie("jwt", token, {
+      maxAge: 24*60*60*1000 ,
+      httpOnly: true,
+       sameSite: 'None',
+      secure:true ,
+    });
+
+   return  res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000/');
+    
+  })
+
+  
 module.exports = {
   login,
   register,
   verifyEmail,
   logout,
-
+loginWithGoogle,
+googleCallback,
   // verifyEmail,
 };

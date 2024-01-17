@@ -12,10 +12,13 @@ const userSchema = new mongoose.Schema({
     } ,
     password :{
         type : String,
-        required : [true , "Password must be provided"],
         select : false 
     },
     avatar : String,
+    secret : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'secret',
+    },
     resetPasswordToken : {
         type : String ,
         default : "",

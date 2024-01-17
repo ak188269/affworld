@@ -31,7 +31,7 @@ app.use('/', require('./routes/router.js'));
 app.use('*', (req, res) => {
     res
     .status(404)
-    .json( {status: false, message: 'Endpoint Not Found'} );
+    .json( {status: false, message: 'No such api found'} );
 })
 
 app.use(globalErrorHandler)
