@@ -65,7 +65,7 @@ const Login = () => {
           </button>
       </form>
       <div className='mt-1 text-center'>Or</div>
-      <img src="/images/sign_in_with_google.png" alt="" className='h-[60px] mx-auto rounded-lg cursor-pointer w-full' onClick={handleLoginWithGoogle}/>
+      <img src="/images/sign_in_with_google.png" alt="" className='h-[65px] mx-auto rounded-lg cursor-pointer w-full' onClick={handleLoginWithGoogle}/>
       <p className="mt-4">
         Don't have an account?{' '}
         <a className="text-blue-500 hover:underline" href="/register">

@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 
 function App() {
 const {user } = useUser();
+
   return (
     <>
     <Router>

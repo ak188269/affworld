@@ -40,10 +40,10 @@ const UserSecret = ({setTab}) => {
 
         <button className='py-1 px-4 border bg-[#0C2D48] text-white rounded' >Submit</button>
 
-        <span className='text-center text-blue-500 underline cursor-pointer' onClick={()=>setTab(15)}>go to home</span>
+        <span className='text-center text-blue-500 underline cursor-pointer' onClick={()=>setTab(1)}>go to home</span>
     </form>
   </div>
   )
 }
 
-export default UserSecret
+export default UserSecret;

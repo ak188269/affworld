@@ -1,4 +1,4 @@
-const isDevMode = ()=>process.env.NODE_ENV !== 'production';
+const isDevMode = ()=> (process.env.NODE_ENV == 'development');
 
 const URL = {
     // user apis
