@@ -3,12 +3,23 @@ import { useUser } from '../../provider/UserProvider'
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../services/user';
 import toast from 'react-hot-toast';
+import DeleteIcon from '@mui/icons-material/Delete';
+import HomeIcon from '@mui/icons-material/Home';
+import EditIcon from '@mui/icons-material/Edit';
+import InfoIcon from '@mui/icons-material/Info';
+import LogoutIcon from '@mui/icons-material/Logout';
+import Logout from '@mui/icons-material/Logout';
 
 const CommonNav = ({tab , setTab ,setVisible, isMobile=false}) => {
     const {user ,setUser} = useUser();
     const [loading , setLoading] = useState(false);
     const navigate = useNavigate();
-    const navMenu = ["Home",user?.secret?.secret ? "Edit your secret" : 'Write your secret','Delete your secret','About us']
+ 
+
+    const navMenu = [  { icon: <HomeIcon fontSize='small'/>, name: "Home" },
+    { icon: <EditIcon fontSize='small'/>, name: user?.secret?.secret ? "Edit your secret" : 'Write your secret' },
+    { icon: <DeleteIcon fontSize='small'/>, name: "Delete your secret" },
+    { icon: <InfoIcon fontSize='small'/>, name: "About us" },]
     
     const handleLogout = async ()=>{
         setLoading(true);
@@ -41,12 +52,14 @@ const CommonNav = ({tab , setTab ,setVisible, isMobile=false}) => {
     </div>
 
     {/* ------- nav menu------- */}
-    <div className='flex flex-col  gap-2 mt-3'>
+    <div className='flex flex-col  gap-3 mt-3'>
 {
     navMenu.map((menu,ind)=>{
        return (
-        <div key={ind} className={`px-3 py-1 rounded cursor-pointer hover:bg-[#2E8BC0] ${tab == (ind+ 1) ? 'bg-[#2E8BC0]' : ""} `} onClick={()=>changeTab(ind+1)}>
-      {menu}
+        <div key={ind} className={`px-3 py-1 rounded cursor-pointer hover:bg-[#2E8BC0] ${tab == (ind+ 1) ? 'bg-[#2E8BC0]' : ""} flex gap-2 items-center`} onClick={()=>changeTab(ind+1)}>
+      {/* <img src={menu.icon} alt="." className='w-[18px]' /> */}
+      {menu.icon}
+      <div className='text-sm'>{menu.name}</div>
     </div>
        )
     })
@@ -55,7 +68,13 @@ const CommonNav = ({tab , setTab ,setVisible, isMobile=false}) => {
 
 {/* log out button----------- */}
 <button onClick={handleLogout} className="bg-[#2E8BC0] w-max text-white p-1 px-3  rounded mt-auto hover:bg-[#48a7de]" type="submit">
-         {loading ? 'processing ..' : 'Log out'}
+         {loading ? 'processing ..' : 
+         <div className='flex gap-1 items-center'>
+          <LogoutIcon fontSize='small'/>
+          <span>Log out</span>
+         </div>
+
+         }
           </button>
   </nav>
   )
