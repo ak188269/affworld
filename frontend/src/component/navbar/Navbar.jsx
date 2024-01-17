@@ -1,59 +1,32 @@
 import React, { useState } from 'react'
-import { useUser } from '../../provider/UserProvider'
-import { useNavigate } from 'react-router-dom';
-import { logout } from '../../services/user';
-import toast from 'react-hot-toast';
+import CommonNav from './CommonNav'
+
+import { Sidebar } from 'primereact/sidebar';
+        
 
 const Navbar = ({tab , setTab}) => {
-    const {user ,setUser} = useUser();
-    const [loading , setLoading] = useState(false);
-    const navigate = useNavigate();
-    const navMenu = ["Home",user?.secret ? "Edit your secret" : 'Write your secret','Delete your secret','Your Profile']
-    
-    const handleLogout = async ()=>{
-        setLoading(true);
-        const [response , error] = await logout();
-        setLoading(false);
-        if(error){
-            toast.error(error.message);
-            return ;
-        }
-        toast.success(response.message);
-        setUser(response.data);
-        navigate("/")
-      }
-    
+  const [visible, setVisible] = useState(false);
+   
   return (
   <>
-  <nav className='bg-[#145DA0] text-white flex flex-col gap-4 p-3 pr-0 h-screen w-[200px] items-center min-w-[200px] sticky top-0'>
-    <h1 className='text-3xl font-bold '>Affworld</h1>
+  <div className=' sticky top-0 h-screen hidden md:block'>
+    <CommonNav setTab={setTab} tab={tab}/>
+  </div>
 
-    {/*  avatar*/}
-    <div className='flex flex-col  items-center justify-center gap-2 mt-2'>
-    <div className='w-[70px] aspect-square bg-[#2E8BC0] rounded-[50%] overflow-hidden'>
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRweqjaPPrrvV_mgmBhYSl_mSNFmAiG0GaVgPgnuMcHYbuMmBclsVD8Yx4qFN9rmLHYlgk&usqp=CAU" alt="."  className='transform scale-[1.1] '/>
-    </div>
-    <span className='font-semibold text-lg'>Hello, {user?.name}</span>
-    </div>
+  {/* --- for smaller device --------- */}
 
-    {/* ------- nav menu------- */}
-    <div className='flex flex-col  gap-2 mt-3'>
-{
-    navMenu.map((menu,ind)=>{
-       return (
-        <div key={ind} className={`px-3 py-1 rounded cursor-pointer hover:bg-[#2E8BC0] ${tab == (ind+ 1) ? 'bg-[#2E8BC0]' : ""} `} onClick={()=>setTab(ind + 1)}>
-      {menu}
-    </div>
-       )
-    })
-}
-</div>
+  <div className='flex justify-between bg-[#145DA0] p-2 items-center md:hidden'>
+    <div className='text-white text-3xl font-semibold cursor-pointer' onClick={()=>setTab(1)}>Affworld</div>
+    <img src="/icons/hamburger.png" alt="" className='w-[25px] cursor-pointer' onClick={()=>setVisible((prev)=>!prev)}/>
 
-{/* log out button----------- */}
-<button onClick={handleLogout} className="bg-[#2E8BC0] w-max text-white p-1 px-3  rounded mt-auto hover:bg-[#48a7de]" type="submit">
-         {loading ? 'processing ..' : 'Log out'}
-          </button>
-  </nav>
+    {/* -sidebar ------ */}
+    <Sidebar visible={visible} onHide={() => setVisible(false)} position='right' style={{ width:"auto"}}
+    content={()=>
+      <CommonNav setTab={setTab} tab={tab} setVisible={setVisible} isMobile={true}/>
+  }
+    />
+  
+  </div>
   </>
   )
 }

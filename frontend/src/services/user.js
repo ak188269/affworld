@@ -37,4 +37,8 @@ const isUserLoggedIn = async () =>{
   return await fetchData(userAxios , url );
 }
 
-export { register  , login , logout , isUserLoggedIn};
+const signInWithGoogle = async ()=>{
+  const url = `${URL.SIGN_IN_WITH_GOOGLE_API}`;
+  return fetchData(userAxios , url );
+}
+export { register  , login , logout , isUserLoggedIn , signInWithGoogle};
