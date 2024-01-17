@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter as Router , Routes , Route} from "react-router-dom"
+import { BrowserRouter as Router , Routes , Route , Navigate} from "react-router-dom"
 import { useUser } from './provider/UserProvider'
 import LandingPage from './pages/landingPage/LandingPage';
 import Login from './pages/login/Login';
@@ -14,7 +14,7 @@ const {user } = useUser();
       <Toaster/>
       <Routes>
         <Route exact path="/" element={user ? <LandingPage/> : <Login/>}/>
-        <Route exact path="/register" element = {<Register/>} />
+        <Route exact path="/register" element = {user ? <Navigate to={"/"} /> : <Register/>} />
       </Routes>
     </Router>
     </>
